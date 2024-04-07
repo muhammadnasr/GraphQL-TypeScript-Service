@@ -1,4 +1,5 @@
 import ConfigInterface from './ConfigInterface';
+import { ENTITIES_PATH, RESOLVERS_PATH } from './constants';
 
 const config: ConfigInterface = {
   env: 'development',
@@ -7,12 +8,12 @@ const config: ConfigInterface = {
     cache: false,
     database: ':memory:',
     dropSchema: true,
-    entities: ['src/entities/*.ts'],
+    entities: [ENTITIES_PATH],
     logger: 'advanced-console' as const,
     synchronize: true,
   },
   graphQLPath: '/graphql',
-  resolvers: [`${__dirname}/../resolvers/**/*Resolver.ts`],
+  resolvers: [RESOLVERS_PATH],
 };
 
 export default config;
