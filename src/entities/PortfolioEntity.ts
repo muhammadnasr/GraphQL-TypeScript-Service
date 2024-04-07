@@ -18,6 +18,7 @@ export default class PortfolioEntity {
   @Column('varchar', { nullable: false, unique: true })
   url: string;
 
+  @Field(() => [PageEntity])
   @OneToMany(() => PageEntity, (page) => page.portfolio)
   pages: PageEntity[];
 }

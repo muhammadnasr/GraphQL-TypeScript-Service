@@ -12,7 +12,9 @@ export default class ListPortfoliosResolver {
     const portfolioRepository = getRepository(PortfolioEntity);
 
     return portfolioRepository
-      .createQueryBuilder('p')
+      .createQueryBuilder('portfolio')
+      .leftJoinAndSelect('portfolio.pages', 'pages')
+      .orderBy('pages.id', 'ASC')
       .getMany();
   }
 }
