@@ -19,7 +19,7 @@ export default class PortfolioVersionResolver {
   // most probably we can extract the common logic to a helper function
 
   @Query(() => [PortfolioVersionEntity], { description: 'Get all versions for a specific portfolio' })
-  async getPortfolioVersions(
+  async geVersionsOfPortfolio(
     @Arg('portfolioId') portfolioId: number,
     @Arg('orderBy', { nullable: true, defaultValue: 'ASC' }) orderBy: 'ASC' | 'DESC'
   ): Promise<PortfolioVersionEntity[]> {

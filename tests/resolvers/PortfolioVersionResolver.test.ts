@@ -84,8 +84,8 @@ describe('PortfolioVersionResolver', () => {
 
     const server = createApolloServer();
     const response = await server.executeOperation({
-      query: `query getPortfolioVersions($portfolioId: Float!, $orderBy: String!) {
-                getPortfolioVersions(portfolioId: $portfolioId, orderBy: $orderBy) {
+      query: `query geVersionsOfPortfolio($portfolioId: Float!, $orderBy: String!) {
+                geVersionsOfPortfolio(portfolioId: $portfolioId, orderBy: $orderBy) {
                   id
                   type
                   createdAt
@@ -97,7 +97,7 @@ describe('PortfolioVersionResolver', () => {
       },
     });
     expect(response).toGraphQLResponseData({
-      getPortfolioVersions: [
+      geVersionsOfPortfolio: [
         {
           id: portfolioVersion1.id,
           type: VersionType.SNAPSHOT,
