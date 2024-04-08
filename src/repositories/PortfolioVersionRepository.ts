@@ -1,10 +1,22 @@
-import { EntityRepository, Repository, getRepository } from 'typeorm';
+import { EntityRepository, Repository, getConnection, getRepository } from 'typeorm';
 import { PortfolioVersionEntity, VersionType } from '../entities/PortfolioVersionEntity';
 import PageVersionEntity from '../entities/PageVersionEntity';
 import PortfolioEntity from '../entities/PortfolioEntity';
 
 @EntityRepository(PortfolioVersionEntity)
 export class PortfolioVersionRepository extends Repository<PortfolioVersionEntity> {
+
+  async deletePortfolioVersion(portfolioVersion: PortfolioVersionEntity) {
+  
+    await getConnection().transaction(async transactionalEntityManager => {
+      // First delete all PageVersionEntity records associated with the PortfolioVersionEntity
+      await transactionalEntityManager.getRepository(PageVersionEntity).delete({ portfolioVersion });
+  
+      // Then delete the PortfolioVersionEntity
+      await transactionalEntityManager.getRepository(PortfolioVersionEntity).remove(portfolioVersion);
+    });
+  }
+
   async createSnapshotFromPortfolio(portfolioId: number): Promise<PortfolioVersionEntity> {
 
     const portfolioRepository = getRepository(PortfolioEntity);

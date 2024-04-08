@@ -3,6 +3,7 @@ import { PortfolioVersionEntity, VersionType } from '../../src/entities/Portfoli
 import createApolloServer from '../test_helpers/createApolloServer';
 import createPortfolioEntity from '../test_helpers/createPortfolioHelper';
 import PortfolioEntity from '../../src/entities/PortfolioEntity';
+import { createSnapshotVersionFromPortfolio, deletePortfolioVersion } from '../test_helpers/portfolioVersionHelper';
 
 describe('PortfolioVersionResolver', () => {
 
@@ -68,5 +69,58 @@ describe('PortfolioVersionResolver', () => {
       const matchingDraftPage = portfolio1.pages.find(originalPage => originalPage.id === snapshotPage.originalPage.id);
       expect(matchingDraftPage).toBeDefined();
     });
+
+    //clean up
+    if (snapshotPortfolioVersion) {
+      deletePortfolioVersion(snapshotPortfolioVersion.id);
+    }
+  });
+
+
+  test('get all available portfolio versions', async () => {
+    let portfolioVersion1 = await createSnapshotVersionFromPortfolio(portfolio1.id);
+    let portfolioVersion2 = await createSnapshotVersionFromPortfolio(portfolio1.id);
+    let portfolioVersion3 = await createSnapshotVersionFromPortfolio(portfolio1.id);
+
+    const server = createApolloServer();
+    const response = await server.executeOperation({
+      query: `query getPortfolioVersions($portfolioId: Float!, $orderBy: String!) {
+                getPortfolioVersions(portfolioId: $portfolioId, orderBy: $orderBy) {
+                  id
+                  type
+                  createdAt
+                }
+              }`,
+      variables: {
+        portfolioId: portfolio1.id,
+        orderBy: "ASC"
+      },
+    });
+    expect(response).toGraphQLResponseData({
+      getPortfolioVersions: [
+        {
+          id: portfolioVersion1.id,
+          type: VersionType.SNAPSHOT,
+          createdAt: portfolioVersion1.createdAt.toISOString(),
+        },
+        {
+          id: portfolioVersion2.id,
+          type: VersionType.SNAPSHOT,
+          createdAt: portfolioVersion2.createdAt.toISOString(),
+        },
+        {
+          id: portfolioVersion3.id,
+          type: VersionType.SNAPSHOT,
+          createdAt: portfolioVersion3.createdAt.toISOString(),
+        },
+      ],
+    });
+
+    await deletePortfolioVersion(portfolioVersion1.id);
+    await deletePortfolioVersion(portfolioVersion2.id);
+    await deletePortfolioVersion(portfolioVersion3.id);
+
   });
 });
+
+

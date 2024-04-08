@@ -35,4 +35,6 @@ async function createPortfolioEntity(properties?: DeepPartial<PortfolioEntity>) 
   return repository.save(await buildPortfolioEntity(properties));
 }
 
+
+
 export default createPortfolioEntity;
