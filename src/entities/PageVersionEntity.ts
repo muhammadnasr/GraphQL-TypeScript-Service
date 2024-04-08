@@ -6,6 +6,11 @@ import PageEntity from './PageEntity';
 @ObjectType()
 @Entity()
 @Unique(["url", "portfolioVersion"])
+/**
+ * Represents a page version entity. it is a snapshot of a page entity at a specific time. 
+ * Note the url is unique but per portfolio version.
+ * Also it contains reference for original page entity and of course the portfolio version entity.
+ */
 export default class PageVersionEntity {
   @Field()
   @PrimaryGeneratedColumn()

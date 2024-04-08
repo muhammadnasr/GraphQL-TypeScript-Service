@@ -1,20 +1,30 @@
-import { getCustomRepository, getConnection } from 'typeorm';
+/**
+ * This file contains helper functions for creating and deleting portfolio versions.
+ * These functions utilize the PortfolioVersionRepository to interact with the database.
+ * Keeping the test files clean from interacting with the database directly.
+ */
+import { getCustomRepository } from 'typeorm';
 import { PortfolioVersionRepository } from '../../src/repositories/PortfolioVersionRepository';
-import PageVersionEntity from '../../src/entities/PageVersionEntity';
-import { PortfolioVersionEntity } from '../../src/entities/PortfolioVersionEntity';
 
+/**
+ * Creates a snapshot version from a portfolio.
+ * 
+ * @param {number} portfolioId - The ID of the portfolio.
+ * @returns {Promise<void>} - A promise that resolves to the created snapshot version.
+ */
 export async function createSnapshotVersionFromPortfolio(portfolioId: number) {
   const portfolioVersionRepository = getCustomRepository(PortfolioVersionRepository);
   return portfolioVersionRepository.createSnapshotFromPortfolio(portfolioId);
 }
 
+/**
+ * Deletes a portfolio version with the specified ID.
+ * 
+ * @param {number} portfolioVersionId - The ID of the portfolio version to delete.
+ * @returns {Promise<void>} - A promise that resolves when the portfolio version is deleted.
+ */
 export async function deletePortfolioVersion(portfolioVersionId: number) {
-  await getConnection().transaction(async transactionalEntityManager => {
-    // First delete all PageVersionEntity records associated with the PortfolioVersionEntity
-    await transactionalEntityManager.getRepository(PageVersionEntity).delete({ portfolioVersion: { id: portfolioVersionId } });
-
-    // Then delete the PortfolioVersionEntity
-    await transactionalEntityManager.getRepository(PortfolioVersionEntity).delete(portfolioVersionId);
-  });
+  const portfolioVersionRepository = getCustomRepository(PortfolioVersionRepository);
+  return portfolioVersionRepository.deletePortfolioVersion(portfolioVersionId);
 }
 

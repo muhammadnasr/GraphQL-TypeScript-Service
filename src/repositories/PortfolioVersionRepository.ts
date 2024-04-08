@@ -4,19 +4,32 @@ import PageVersionEntity from '../entities/PageVersionEntity';
 import PortfolioEntity from '../entities/PortfolioEntity';
 
 @EntityRepository(PortfolioVersionEntity)
+/**
+ * Repository for managing PortfolioVersionEntity objects.
+ */
 export class PortfolioVersionRepository extends Repository<PortfolioVersionEntity> {
 
-  async deletePortfolioVersion(portfolioVersion: PortfolioVersionEntity) {
+  /**
+   * Deletes a portfolio version and its associated page versions.
+   * @param portfolioVersion - The portfolio version to delete.
+   */
+  async deletePortfolioVersion(portfolioVersionId: number) {
   
     await getConnection().transaction(async transactionalEntityManager => {
       // First delete all PageVersionEntity records associated with the PortfolioVersionEntity
-      await transactionalEntityManager.getRepository(PageVersionEntity).delete({ portfolioVersion });
+      await transactionalEntityManager.getRepository(PageVersionEntity).delete({ portfolioVersion: { id: portfolioVersionId } });
   
       // Then delete the PortfolioVersionEntity
-      await transactionalEntityManager.getRepository(PortfolioVersionEntity).remove(portfolioVersion);
+      await transactionalEntityManager.getRepository(PortfolioVersionEntity).delete({ id: portfolioVersionId });
     });
   }
 
+  /**
+   * Creates a snapshot version of a portfolio.
+   * @param portfolioId - The ID of the portfolio to create a snapshot from.
+   * @returns The created snapshot portfolio version.
+   * @throws Error if the portfolio is not found.
+   */
   async createSnapshotFromPortfolio(portfolioId: number): Promise<PortfolioVersionEntity> {
 
     const portfolioRepository = getRepository(PortfolioEntity);

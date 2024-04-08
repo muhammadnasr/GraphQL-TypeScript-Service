@@ -4,7 +4,7 @@ import PortfolioEntity from './PortfolioEntity';
 import PageVersionEntity from './PageVersionEntity';
 
 export enum VersionType {
-  // we don't have type for draft, but we can assume that the current PortfolioEntity is the draft
+  // We don't have type for draft, but we can assume that the current PortfolioEntity is the draft
   // user can have as many published versions as they want but the latest one is the currently published one
   PUBLISHED = 'published',
   // user can have as many snapshots as they want
@@ -18,6 +18,10 @@ registerEnumType(VersionType, {
 
 @ObjectType('PortfolioVersion')
 @Entity()
+/**
+ * Represents a portfolio version entity.
+ * it is a clone of a portfolio entity at a specific time along with its pages at that time
+ */
 export class PortfolioVersionEntity {
   @Field()
   @PrimaryGeneratedColumn()

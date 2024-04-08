@@ -11,6 +11,7 @@ describe('ListPortfoliosResolver', () => {
     portfolio1 = await createPortfolioEntity();
     portfolio2 = await createPortfolioEntity();
     portfolio3 = await createPortfolioEntity();
+    // assume that the pages are sorted by id ASC
     portfolio1.pages.sort((a, b) => a.id - b.id);
     portfolio2.pages.sort((a, b) => a.id - b.id);
     portfolio3.pages.sort((a, b) => a.id - b.id);
@@ -18,7 +19,7 @@ describe('ListPortfoliosResolver', () => {
 
 
   // tests/resolvers/ListPortfoliosResolver.test.ts
-  test('return 3 items without pages', async () => {
+  test('return 3 portfolios without pages', async () => {
     const server = createApolloServer();
     const response = await server.executeOperation({
       query: `query {
@@ -48,7 +49,7 @@ describe('ListPortfoliosResolver', () => {
   });
 
   // tests/resolvers/ListPortfoliosResolver.test.ts
-  test('return 3 items with pages', async () => {
+  test('return 3 portfolios with pages', async () => {
     const server = createApolloServer();
     const response = await server.executeOperation({
       query: `query ListPortfolios {

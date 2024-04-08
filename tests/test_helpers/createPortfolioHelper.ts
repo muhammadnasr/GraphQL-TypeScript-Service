@@ -4,7 +4,13 @@ import { DeepPartial, getRepository } from 'typeorm';
 import PortfolioEntity from '../../src/entities/PortfolioEntity';
 import PageEntity from '../../src/entities/PageEntity';
 
-export async function buildPortfolioEntity(properties?: DeepPartial<PortfolioEntity>) {
+/**
+ * Builds a portfolio entity with pages.
+ * 
+ * @param properties - Optional properties to override the default values of the portfolio entity.
+ * @returns A promise that resolves to the built portfolio entity.
+ */
+export async function buildPortfolioEntityWithPages(properties?: DeepPartial<PortfolioEntity>) {
   const repository = getRepository(PortfolioEntity);
   const pageRepository = getRepository(PageEntity);
 
@@ -32,7 +38,7 @@ export async function buildPortfolioEntity(properties?: DeepPartial<PortfolioEnt
 
 async function createPortfolioEntity(properties?: DeepPartial<PortfolioEntity>) {
   const repository = getRepository(PortfolioEntity);
-  return repository.save(await buildPortfolioEntity(properties));
+  return repository.save(await buildPortfolioEntityWithPages(properties));
 }
 
 
