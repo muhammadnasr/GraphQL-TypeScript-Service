@@ -84,8 +84,8 @@ describe('PortfolioVersionResolver', () => {
 
     const server = createApolloServer();
     const response = await server.executeOperation({
-      query: `query geVersionsOfPortfolio($portfolioId: Float!, $orderBy: String!) {
-                geVersionsOfPortfolio(portfolioId: $portfolioId, orderBy: $orderBy) {
+      query: `query geVersionsOfPortfolio($portfolioId: Float!, $orderByCreatedAt: String!) {
+                geVersionsOfPortfolio(portfolioId: $portfolioId, orderByCreatedAt: $orderByCreatedAt) {
                   id
                   type
                   createdAt
@@ -93,7 +93,7 @@ describe('PortfolioVersionResolver', () => {
               }`,
       variables: {
         portfolioId: portfolio1.id,
-        orderBy: "ASC"
+        orderByCreatedAt: "ASC"
       },
     });
     expect(response).toGraphQLResponseData({
@@ -119,6 +119,34 @@ describe('PortfolioVersionResolver', () => {
     await deletePortfolioVersion(portfolioVersion1.id);
     await deletePortfolioVersion(portfolioVersion2.id);
     await deletePortfolioVersion(portfolioVersion3.id);
+
+  });
+
+  test('get all pages of a portfolio version', async () => {
+    let portfolioVersion1 = await createSnapshotVersionFromPortfolio(portfolio1.id);
+    portfolioVersion1.pageVersions.sort((a, b) => a.id - b.id);
+
+    const server = createApolloServer();
+    const response = await server.executeOperation({
+      query: `query getPagesOfPortfolioVersion($portfolioVersionId: Float!) {
+                getPagesOfPortfolioVersion(portfolioVersionId: $portfolioVersionId) {
+                  id
+                  name
+                }
+              }`,
+      variables: {
+        portfolioVersionId: portfolioVersion1.id,
+      },
+    });
+    expect(response).toGraphQLResponseData({
+      getPagesOfPortfolioVersion: 
+        portfolioVersion1.pageVersions.map(page => ({
+          "id": page.id,
+          "name": page.name,
+        })),     
+    });
+
+    await deletePortfolioVersion(portfolioVersion1.id);
 
   });
 });

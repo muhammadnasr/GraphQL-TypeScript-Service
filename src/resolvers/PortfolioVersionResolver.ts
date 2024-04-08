@@ -1,8 +1,9 @@
 import { Resolver, Mutation, Arg, Query } from 'type-graphql';
 import { Service } from 'typedi';
-import { getCustomRepository } from 'typeorm';
+import { getCustomRepository, getRepository } from 'typeorm';
 import { PortfolioVersionEntity } from '../entities/PortfolioVersionEntity';
 import { PortfolioVersionRepository } from '../repositories/PortfolioVersionRepository';
+import PageVersionEntity from '../entities/PageVersionEntity';
 
 @Resolver()
 @Service()
@@ -21,7 +22,7 @@ export default class PortfolioVersionResolver {
   @Query(() => [PortfolioVersionEntity], { description: 'Get all versions for a specific portfolio' })
   async geVersionsOfPortfolio(
     @Arg('portfolioId') portfolioId: number,
-    @Arg('orderBy', { nullable: true, defaultValue: 'ASC' }) orderBy: 'ASC' | 'DESC'
+    @Arg('orderByCreatedAt', { nullable: true, defaultValue: 'ASC' }) orderBy: 'ASC' | 'DESC'
   ): Promise<PortfolioVersionEntity[]> {
     const portfolioVersionRepository = getCustomRepository(PortfolioVersionRepository);
     return portfolioVersionRepository.find({
@@ -30,5 +31,13 @@ export default class PortfolioVersionResolver {
     });
   }
 
+  @Query(() => [PageVersionEntity], { description: 'Get all pages for a specific portfolio version' })
+  async getPagesOfPortfolioVersion(@Arg('portfolioVersionId') portfolioVersionId: number): Promise<PageVersionEntity[]> {
+    const pageVersionRepository = getRepository(PageVersionEntity);
+    return pageVersionRepository.find({
+      where: { portfolioVersion: {id: portfolioVersionId } },
+      order: { id: 'ASC' },
+    });
+  }
 
 }

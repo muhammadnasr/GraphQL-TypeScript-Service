@@ -17,7 +17,7 @@ export async function buildPortfolioEntity(properties?: DeepPartial<PortfolioEnt
   await repository.save(portfolio);
 
   portfolio.pages = await Promise.all(
-    Array.from({ length: 2 }, async () => {
+    Array.from({ length: 3 }, async () => {
       const page = pageRepository.create({
         name: faker.name.findName(),
         url: faker.internet.url(),
